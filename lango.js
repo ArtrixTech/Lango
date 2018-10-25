@@ -9,6 +9,13 @@ Lango.prototype.Languages = {
     lang_es_us: "ES_US",     // Spanish - United States
     lang_es_es: "ES_ES"      // Spanish - Spanish
 };
+Lango.prototype.CountryCodes = {
+    CN: "ZH_CN",    // Chinese
+    US: "EN_US",    // English - United States
+    JP: "JA_JP",     // Japanese - Japan
+    KR: "KO_KR",     // Korean - Korea
+    ES: "ES_ES",     // Spanish - United States
+};
 
 Lango.prototype.isLangExist = function (lang) {
 
@@ -45,11 +52,18 @@ Lango.prototype.setCountryCode = function (code) {
     this.countryCode = code;
 }
 
-Lango.prototype.getGeoInfo = function () {
+Lango.prototype.getLangInfo = function (callback) {
 
-    // TODO: DEBUG
-    $.getJSON("http://ip-api.com/json", function (result) {
-        this.setCountryCode(result.countryCode);
+    var langInfoURL = "http://ip-api.com/json/?fields=countryCode,query";
+
+    // Use "context" to send the this object
+    $.ajax({
+        url: langInfoURL, context: this, success: function (result) {
+            this.countryCode = result.countryCode;
+            
+            // This callback function contains the "this" object.
+            callback(result,this)
+        }
     });
 
 }
@@ -58,6 +72,12 @@ Lango.prototype.getLang = function () {
 
     var langFromCookie = $.cookie('lango_site_language');
     if (langFromCookie) return langFromCookie;
+
+    function convertLang(data,this){
+
+        // TODO: How to return from inner side?
+
+    }
 
 }
 
