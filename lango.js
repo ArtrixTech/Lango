@@ -1,6 +1,6 @@
 function Lango() { }
 
-Lango.prototype.countryCode = undefined;
+
 Lango.prototype.Languages = {
     lang_zh_cn: "ZH_CN",    // Chinese
     lang_en_us: "EN_US",    // English - United States
@@ -9,26 +9,46 @@ Lango.prototype.Languages = {
     lang_es_us: "ES_US",     // Spanish - United States
     lang_es_es: "ES_ES"      // Spanish - Spanish
 };
-Lango.prototype.CountryCodes = {
+
+Lango.prototype.countryCode = undefined;
+Lango.prototype.language = undefined;
+Lango.prototype.languageDetected = undefined;
+
+// CountryCode -> Languages Object
+Lango.prototype.RegionDefaultLanguages = {
     CN: "ZH_CN",    // Chinese
     US: "EN_US",    // English - United States
     JP: "JA_JP",     // Japanese - Japan
     KR: "KO_KR",     // Korean - Korea
     ES: "ES_ES",     // Spanish - United States
+    // TODO: Check if the return api contains a "Unknown" option
+};
+
+Lango.prototype.Settings = {
+    autoDetectLanguageByCountryCode: true,
+    translateAllContents: false,
+    defualtLanguage: "ZH_CN"
 };
 
 Lango.prototype.isLangExist = function (lang) {
 
-    for (key in this.Languages) {
-        console.log("L:" + this.Languages[key] + " In:" + lang)
-        if (this.Languages[key] == lang) return true;
-    }
+    for (key in this.Languages) if (this.Languages[key] == lang) return true;
     return false;
 
 }
 
+Lango.prototype.isRegionExist = function (region) {
+
+    for (key in this.RegionDefaultLanguages) if (region == key) return true;
+    return false;
+
+}
 
 Lango.prototype.init = function () {
+
+    this.countryCode = "CN";
+    this.language = undefined;
+    this.languageDetected = false;
 
     // Detect if the JQuery.cookie is exist
     function loadScript(loc) {
@@ -40,43 +60,49 @@ Lango.prototype.init = function () {
     !window.jQuery && loadScript("jquery-3.3.1.min.js");
     !window.jQuery.cookie && loadScript("jquery.cookie.js");
 
+    this.getLanguage();
+
 }
 
+Lango.prototype.getLangByGeoInfo = function (callback) {
 
-Lango.prototype.strToLang = function (str) {
-    // for (key in this.Language)if (str == key) return this.Language[key];
-    // throw Error = Error("Input Language Type Error")
-}
-
-Lango.prototype.setCountryCode = function (code) {
-    this.countryCode = code;
-}
-
-Lango.prototype.getLangInfo = function (callback) {
-
-    var langInfoURL = "http://ip-api.com/json/?fields=countryCode,query";
+    var geoInfoURL = "http://ip-api.com/json/?fields=countryCode,query";
 
     // Use "context" to send the this object
     $.ajax({
-        url: langInfoURL, context: this, success: function (result) {
+        url: geoInfoURL, context: this, success: function (result) {
+
             this.countryCode = result.countryCode;
-            
-            // This callback function contains the "this" object.
-            callback(result,this)
+            console.log("Got CountryCode:" + this.countryCode);
+
+            if (this.isRegionExist(this.countryCode)) this.language = this.RegionDefaultLanguages[this.countryCode];
+            else this.language = this.Settings.defualtLanguage;
+
+            this.languageDetected = true;
+
+            console.log("Got Language:" + this.language);
+
+            $.cookie('lango_site_language', this.language, { path: '/' });
+
         }
     });
 
 }
 
-Lango.prototype.getLang = function () {
+Lango.prototype.getLanguage = function () {
 
     var langFromCookie = $.cookie('lango_site_language');
-    if (langFromCookie) return langFromCookie;
-
-    function convertLang(data,this){
-
-        // TODO: How to return from inner side?
-
+    if (langFromCookie) {
+        this.language = langFromCookie;
+        this.languageDetected = true;
+        console.log("Got Language[From Cookie]:" + this.language);
+    }
+    else {
+        if (this.Settings.autoDetectLanguageByCountryCode) this.getLangByGeoInfo();
+        else {
+            this.language = this.Settings.defualtLanguage;
+            console.log("Got Language[From Default Language]:" + this.language);
+        }
     }
 
 }
