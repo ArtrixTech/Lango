@@ -60,6 +60,7 @@ Lango.prototype.init = function () {
     this.langPackLanguage = undefined;
 
     // Detect if the JQuery.cookie is exist
+    // TODO: Add a script loading location property
     function loadScript(loc) {
         var newScript = document.createElement("script");
         newScript.setAttribute("type", "text/javascript");
@@ -90,7 +91,6 @@ Lango.prototype.getLangByGeoInfo = function (callback) {
             this.languageDetected = true;
 
             console.log("Got Language:" + this.language);
-
             $.cookie('lango_site_language', this.language, {
                 path: '/'
             });
@@ -103,6 +103,7 @@ Lango.prototype.getLangByGeoInfo = function (callback) {
 
 Lango.prototype.getLanguage = function () {
 
+    // TODO: Judge if the ip has changed and change the language by it.
     var langFromCookie = $.cookie('lango_site_language');
     if (langFromCookie) {
         this.language = langFromCookie;
@@ -181,7 +182,7 @@ Lango.prototype.setState = function (langoID, state) {
 Lango.prototype.translate = function (lang) {
 
     function parseCSS(object, cssList) {
-
+        // TODO: Finish this module.
     }
 
     if (this.isLangExist(lang)) {
@@ -200,6 +201,7 @@ Lango.prototype.translate = function (lang) {
 
                     var states = translateContent.states;
 
+                    // TODO: Parse the css part.
                     if (states) item.text(states[that.stateList[langoID]].text);
                     else item.text(translateContent.text);
 
