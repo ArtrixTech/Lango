@@ -76,10 +76,9 @@ Lango.prototype.getLangByGeoInfo = function (callback) {
 
     var geoInfoURL = "http://ip-api.com/json/?fields=countryCode,query";
 
-    // Use "context" to send the this object
     $.ajax({
         url: geoInfoURL,
-        context: this,
+        context: this, // Use "context" to send the this object
         success: function (result) {
 
             this.countryCode = result.countryCode;
@@ -126,8 +125,8 @@ Lango.prototype.loadLanguagePack = function (lang, callback) {
     var baseLoc = this.Settings.languagePackRoot;
     baseLoc += lang + ".json";
 
-    // If the langPack have been loaded, just active the callback function.
-    if (this.langPackLoaded && this.langPackLanguage == lang) callback(this.langPackLoaded);
+    // If the langPack was loaded, just active the callback function.
+    if (this.langPackLoaded && this.langPackLanguage == lang) callback(this, this.langPackLoaded);
     else {
 
         this.langPackLoaded = false;
@@ -167,9 +166,17 @@ Lango.prototype.updateTranslateItemList = function () {
 }
 
 Lango.prototype.setState = function (langoID, state) {
-    this.stateList[langoID] = state;
+    if (this.langPackLoaded) {
+        var translateContent = this.langContents[langoID];
+        if (translateContent) {
+            var states = translateContent.states;
+            if (states) {
+                this.stateList[langoID] = state;
+                return state
+            } else throw Error = Error("[" + langoID + "] This element doesn't contain a \"state\" property.");
+        } else throw Error = Error("[" + langoID + "] This element doesn't exist.");
+    } else throw Error = Error("Language pack not loaded.");
 }
-
 
 Lango.prototype.translate = function (lang) {
 
@@ -182,7 +189,6 @@ Lango.prototype.translate = function (lang) {
         this.updateTranslateItemList();
 
         function doTranslate(that, loaded) {
-
             for (key in that.translateItemList) {
 
                 var item = that.translateItemList[key];
@@ -198,7 +204,6 @@ Lango.prototype.translate = function (lang) {
                     else item.text(translateContent.text);
 
                 }
-
             }
         }
 
