@@ -1,0 +1,33 @@
+{
+    "language": "ZH_CN",
+    "contents": {
+        "title": {
+            "text": "Lango.js"
+        },
+        "slogan": {
+            "text": "轻量级网页国际化引擎"
+        },
+        "test": {
+            "states": {
+                "default": {
+                    "text": "当前处于默认状态",
+                    "css": {
+                        "left": "0px"
+                    }
+                },
+                "state1": {
+                    "text": "当前处于状态1",
+                    "css": {
+                        "left": "100px"
+                    }
+                },
+                "state2": {
+                    "text": "当前处于状态2",
+                    "css": {
+                        "left": "0px"
+                    }
+                }
+            }
+        }
+    }
+}

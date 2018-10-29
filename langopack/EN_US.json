@@ -1,0 +1,33 @@
+{
+    "language": "EN_US",
+    "contents": {
+        "title": {
+            "text": "Lango.js"
+        },
+        "slogan": {
+            "text": "Lightweight i18n engine."
+        },
+        "test": {
+            "states": {
+                "default": {
+                    "text": "Now I'm in the default state.",
+                    "css": {
+                        "left": "0px"
+                    }
+                },
+                "state1": {
+                    "text": "Now I'm in the state1.",
+                    "css": {
+                        "left": "100px"
+                    }
+                },
+                "state2": {
+                    "text": "Now I'm in the state2.",
+                    "css": {
+                        "left": "0px"
+                    }
+                }
+            }
+        }
+    }
+}
