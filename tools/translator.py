@@ -3,19 +3,22 @@ import os
 import json
 
 translator = Translator(service_urls=['translate.google.cn'], timeout=5)
-if input("Are you in China network? (To prevent the blockage of the GFW) (Y/N) ( Default:Y )") == "N":
+if input("Are you in China network? (To prevent the blockage of the GFW) (Y/N) ( Default:Y )\n").lower() in ["n", "no"]:
     translator.service_urls = ['translate.google.com']
+    print(" > Source region edited.")
 
 src_file = input("Input the src LangoPack file location:\n")
 if os.path.exists(src_file):
 
     src_lang = input("Input the src language (all the supported languages are in the README.md file):\n")
     dest_lang = input(
-        "Input the destination language (JSON list supported):" +
+        "Input the destination language (JSON List supported):" +
         "\n( JSON List Example: {\"languages\" : [\"ru\",\"ja\"]} )\n")
 
-    is_multi_dest = False
     if dest_lang:
+
+        is_multi_dest = False
+
         if "{" in dest_lang and "}" in dest_lang:
             dest_lang = json.loads(dest_lang)["languages"]
             is_multi_dest = True
@@ -71,11 +74,13 @@ if os.path.exists(src_file):
 
         translated = {}
         if is_multi_dest:
+
             for dest_l in dest_lang:
                 print("Translating into " + dest_l + ":")
                 finished = translate(src_lang, dest_l, reload())
                 translated[dest_l] = finished
         else:
+
             print("Translating into " + dest_lang + ":")
             finished = translate(src_lang, dest_lang, reload())
             translated[dest_lang] = finished
@@ -89,9 +94,9 @@ if os.path.exists(src_file):
             print("All file translated. Please edit the 'language' option in each translated json file.")
         else:
             print("File translated. Please edit the 'language' option in the translated json file.")
+
     else:
         print("There is no destination for me to translate QAQ")
-
 
 else:
     print("File doesn't exist.")

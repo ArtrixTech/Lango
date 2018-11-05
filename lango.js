@@ -6,16 +6,9 @@ Lango.prototype.Languages = {
     lang_ja_jp: "JA_JP", // Japanese - Japan
     lang_ko_kr: "KO_KR", // Korean - Korea
     lang_es_us: "ES_US", // Spanish - United States
-    lang_es_es: "ES_ES" // Spanish - Spanish
+    lang_es_es: "ES_ES", // Spanish - Spanish
+    lang_ru_ru: "RU_RU" // Russian - Russia
 };
-
-Lango.prototype.countryCode = undefined;
-Lango.prototype.language = undefined;
-Lango.prototype.langContents = undefined;
-Lango.prototype.languageDetected = undefined;
-
-Lango.prototype.translateItemList = {};
-Lango.prototype.stateList = {};
 
 // CountryCode -> Languages Object
 Lango.prototype.RegionDefaultLanguages = {
@@ -26,8 +19,28 @@ Lango.prototype.RegionDefaultLanguages = {
     JP: "JA_JP", // Japanese - Japan
     KR: "KO_KR", // Korean - Korea
     ES: "ES_ES", // Spanish - United States
+    RU: "RU_RU" // Russian - Russia
     // TODO: Check if the return api contains a "Unknown" option
 };
+
+// Languages Object -> Description
+Lango.prototype.LanguageDescriptions = {
+    "ZH_CN": "简体中文", // Chinese
+    "EN_US": "English", // English - United States
+    "JA_JP": "日本語", // Japanese - Japan
+    "KO_KR": "한국어", // Korean - Korea
+    "ES_US": "Español", // Spanish - United States
+    "ES_ES": "Español", // Spanish - Spanish
+    "RU_RU": "Русский" // Russian - Russia
+};
+
+Lango.prototype.countryCode = undefined;
+Lango.prototype.language = undefined;
+Lango.prototype.langContents = undefined;
+Lango.prototype.languageDetected = undefined;
+
+Lango.prototype.translateItemList = {};
+Lango.prototype.stateList = {};
 
 Lango.prototype.Settings = {
     autoDetectLanguageByCountryCode: true,
@@ -37,22 +50,18 @@ Lango.prototype.Settings = {
 };
 
 Lango.prototype.isLangExist = function (lang) {
-
     for (key in this.Languages)
         if (this.Languages[key] == lang) return true;
     return false;
-
 }
 
 Lango.prototype.isRegionExist = function (region) {
-
     for (key in this.RegionDefaultLanguages)
         if (region == key) return true;
     return false;
-
 }
 
-Lango.prototype.init = function () {
+Lango.prototype.init = function (callback) {
 
     this.countryCode = "CN";
     this.language = undefined;
@@ -70,7 +79,8 @@ Lango.prototype.init = function () {
     }!window.jQuery && loadScript("jquery-3.3.1.min.js");
     !window.jQuery.cookie && loadScript("jquery.cookie.js");
 
-    this.getLanguage();
+    if (!callback) callback = function doNothing() {};
+    this.getLanguage(callback);
 
 }
 
@@ -78,6 +88,7 @@ Lango.prototype.getLangByGeoInfo = function (callback) {
 
     var geoInfoURL = "http://ip-api.com/json/?fields=countryCode,query";
     var geoInfoURLHttps = "https://ipapi.co/country";
+    if (!callback) callback = function doNothing() {};
 
     function process(that) {
         console.log("Got CountryCode:" + that.countryCode);
@@ -91,32 +102,35 @@ Lango.prototype.getLangByGeoInfo = function (callback) {
         $.cookie('lango_site_language', that.language, {
             path: '/'
         });
-        that.translate(that.language);
+        callback(that.language);
+
     }
 
+    var successCallback, urlDest;
+    
     if (document.location.protocol == "https:") {
-        $.ajax({
-            url: geoInfoURLHttps,
-            context: this, // Use "context" to send the this object
-            success: function (result) {
-                this.countryCode = result;
-                process(this);
-            }
-        });
+        successCallback = function (result) {
+            this.countryCode = result;
+            process(this);
+        };
+        urlDest = geoInfoURLHttps;
     } else {
-        $.ajax({
-            url: geoInfoURL,
-            context: this, // Use "context" to send the this object
-            success: function (result) {
-                this.countryCode = result.countryCode;
-                process(this);
-            }
-        });
+        successCallback = function (result) {
+            this.countryCode = result.countryCode;
+            process(this);
+        };
+        urlDest = geoInfoURL;
     }
+
+    $.ajax({
+        url: urlDest,
+        context: this, // Use "context" to send the this object
+        success: successCallback
+    });
 
 }
 
-Lango.prototype.getLanguage = function () {
+Lango.prototype.getLanguage = function (callback) {
 
     // TODO: Judge if the ip has changed and change the language by it.
     var langFromCookie = $.cookie('lango_site_language');
@@ -124,12 +138,12 @@ Lango.prototype.getLanguage = function () {
         this.language = langFromCookie;
         this.languageDetected = true;
         console.log("Got Language[From Cookie]:" + this.language);
-        this.translate(this.language);
+        callback(this.language);
     } else {
-        if (this.Settings.autoDetectLanguageByCountryCode) this.getLangByGeoInfo();
+        if (this.Settings.autoDetectLanguageByCountryCode) this.getLangByGeoInfo(callback);
         else {
             this.language = this.Settings.defualtLanguage;
-            this.translate(this.language);
+            callback(this.language);
             console.log("Got Language[From Default Language]:" + this.language);
         }
     }
@@ -253,6 +267,12 @@ Lango.prototype.translate = function (lang) {
         this.updateTranslateItemList();
 
         function doTranslate(that, loaded) {
+
+            // Put it here to ensure the langpack is exist.
+            $.cookie('lango_site_language', that.language, {
+                path: '/'
+            });
+
             for (key in that.translateItemList) {
 
                 for (index in that.translateItemList[key]) {
