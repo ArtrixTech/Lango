@@ -1,4 +1,19 @@
-'''
+## How to use the translator?
+This python script is a tool for you to translate your Lango Language Pack into different languages automaticly.
+
+Firstly, execute the translator.py by python commandline.
+
+> For Linux User: &nbsp;Execute the terminal first.
+
+> For Windows User: &nbsp;Execute the cmd.exe (or powershell) first.
+
+```
+$ python translator.py
+```
+And you will see some prompts. Just follow them, the translator will generate translated files automaticly.
+
+## What are the supported languages?
+```
 LANGUAGES = {
     'af': 'afrikaans',
     'sq': 'albanian',
@@ -107,4 +122,4 @@ LANGUAGES = {
     'fil': 'Filipino',
     'he': 'Hebrew'
 }
-'''
+```

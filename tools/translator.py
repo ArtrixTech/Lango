@@ -3,7 +3,7 @@ import os
 import json
 
 translator = Translator(service_urls=['translate.google.cn'], timeout=5)
-if input("Are you in China network? (To prevent the blockage of the GFW) (Y/N) ( Default:Y )\n").lower() in ["n", "no"]:
+if input("Are you in the China network? (To prevent the blockage of the GFW) (Y/N) ( Default:Y )\n").lower() in ["n", "no"]:
     translator.service_urls = ['translate.google.com']
     print(" > Source region edited.")
 
