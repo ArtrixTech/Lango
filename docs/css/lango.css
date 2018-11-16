@@ -18,7 +18,7 @@ body {
 }
 
 .lango-banner {
-    background: url(/static/lango/img/bg3.jpg) 50% 50% / cover;
+    background: url(/img/bg3.jpg) 50% 50% / cover;
     left: 6rem;
     position: relative;
     padding: 124px 106px;
@@ -179,7 +179,7 @@ body {
 }
 
 .lango-feature-div {
-    background: url(/static/lango/img/bg-mid.jpg) 50% 50% / cover;
+    background: url(/img/bg-mid.jpg) 50% 50% / cover;
     background: #f9f9f9;
     position: relative;
     width: 100%;
