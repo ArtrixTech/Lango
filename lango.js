@@ -107,7 +107,7 @@ Lango.prototype.getLangByGeoInfo = function (callback) {
     }
 
     var successCallback, urlDest;
-    
+
     if (document.location.protocol == "https:") {
         successCallback = function (result) {
             this.countryCode = result;
@@ -152,7 +152,7 @@ Lango.prototype.getLanguage = function (callback) {
 
 Lango.prototype.loadLanguagePack = function (lang, callback) {
 
-    var baseLoc = this.Settings.languagePackRoot;
+    var baseLoc = this.Settings.languagePackRoot + "/";
     baseLoc += lang + ".json";
 
     function isJsonObject(str) {
