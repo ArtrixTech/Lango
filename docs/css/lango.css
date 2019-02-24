@@ -98,11 +98,11 @@ body {
 }
 
 .artrix_small {
-    width: 102px;
-    left: 42px;
-    top: 32px;
+    width: 92px;
+    left: 61px;
+    top: 49px;
     position: absolute;
-    filter: brightness(0);
+    filter: brightness(0.150);
 }
 
 #slogan_block {
